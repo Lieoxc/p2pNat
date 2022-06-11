@@ -1,5 +1,5 @@
 # p2pNat
-p2p NAT穿透工具
+p2p NAT穿透工具（UDP方式实现）
 ## client
 NAT内网主机端运行代码，当前实现效果为UDP穿透，两个位于不同NAT下的内网主机，可以互相通信
 ## server
