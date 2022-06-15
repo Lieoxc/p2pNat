@@ -13,7 +13,7 @@ import (
 			NAT    作为NAT探测,验证是否为  端口限制型NAT
 */
 func main() {
-	host := flag.String("p", "192.168.1.1", "an int")
+	host := flag.String("h", "192.168.1.1", "an int")
 	port := flag.String("p", "8080", "an int")
 	mode := flag.String("m", "normal", "mode")
 	flag.Parse()
