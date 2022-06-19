@@ -1,0 +1,9 @@
+server:
+  host: "110.42.255.112"
+  port: 9090
+
+visitor: #访问者
+  visitedName: "p2pTest" #对端标志
+  localIP: "127.0.0.1"
+  localPort: 6000    #本地代理端口，通过代理端口访问p2p对端的端口
+  

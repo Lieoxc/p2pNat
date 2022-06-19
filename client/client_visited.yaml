@@ -1,0 +1,9 @@
+server:
+  host: "110.42.255.112"
+  port: 9090
+
+visited: #被访问者
+  name: "p2pTest" #本机标志
+  bindIP: 127.0.0.1 #决定被对端访问的IP 端口
+  bindPort: 3389
+  
