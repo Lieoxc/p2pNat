@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"net"
 	"p2pNat/client/common"
 	"p2pNat/client/config"
+	"p2pNat/client/log"
 	"p2pNat/client/utils"
 	"p2pNat/client/visited"
 	"p2pNat/client/visitor"
@@ -25,12 +25,14 @@ var ( //p2p对端的NAT外网地址和端口
 var configFile = flag.String("f", "./client_visitor.yaml", "the config file")
 
 func main() {
+	log.Debug("p2p Nate Start")
+
 	flag.Parse()
 
 	localAddr.Port = utils.RandPort(10000, 20000)
 	cfg, err := config.ReadCfg(*configFile)
 	if err != nil {
-		fmt.Println("ReadCfg error:", err)
+		log.Error("ReadCfg error:", err)
 		return
 	}
 	common.WriteChannel = make(chan []byte, 10)
@@ -42,25 +44,25 @@ func main() {
 	}
 	// 创建连接
 	clientTest(cfg.Server.Host, cfg.Server.Port)
-
+	log.Flush()
 }
 
 func clientTest(host, port string) {
 	remoteAddr, err := net.ResolveUDPAddr("udp4", host+":"+port)
 	if err != nil {
-		fmt.Println("ResolveUDPAddr:", err)
+		log.Error("ResolveUDPAddr:", err)
 		return
 	}
 	socket, err := net.DialUDP("udp4", localAddr, remoteAddr)
 	if err != nil {
-		fmt.Println("连接失败!", err)
+		log.Error("连接失败!", err)
 		return
 	}
 	defer socket.Close()
 	senddata := []byte("hello server,I am client!")
 	_, err = socket.Write(senddata)
 	if err != nil {
-		fmt.Println("发送数据失败!", err)
+		log.Error("发送数据失败!", err)
 		return
 	}
 	peerHost := ""
@@ -70,7 +72,7 @@ func clientTest(host, port string) {
 		data := make([]byte, 128)
 		_, _, err := socket.ReadFromUDP(data)
 		if err != nil {
-			fmt.Println("读取数据失败!", err)
+			log.Error("读取数据失败!", err)
 			continue
 		}
 		recvData := string(data)
@@ -92,12 +94,12 @@ func clientTest(host, port string) {
 func p2pHandler(host, port string) {
 	remoteAddr, err := net.ResolveUDPAddr("udp4", host+":"+port)
 	if err != nil {
-		fmt.Println("ResolveUDPAddr:", err)
+		log.Error("ResolveUDPAddr:", err)
 		return
 	}
 	p2pConnect, err := net.ListenUDP("udp4", localAddr)
 	if err != nil {
-		fmt.Println("监听失败!", err)
+		log.Error("监听失败!", err)
 		return
 	}
 
@@ -119,13 +121,13 @@ func p2pSend(p2pConnect *net.UDPConn, remoteAddr *net.UDPAddr) {
 			senddata := []byte(detectInfo)
 			_, err := p2pConnect.WriteToUDP(senddata, remoteAddr)
 			if err != nil {
-				fmt.Println("发送数据失败!", err)
+				log.Error("发送数据失败!", err)
 				return
 			}
 		case msg := <-common.WriteChannel: //从本地代理地址收到数据,发送到对端Nat 的洞中
 			_, err := p2pConnect.WriteToUDP(msg, remoteAddr)
 			if err != nil {
-				fmt.Println("发送数据失败!", err)
+				log.Error("发送数据失败!", err)
 				return
 			}
 		}
@@ -137,12 +139,12 @@ func p2pRead(p2pConnect *net.UDPConn) {
 		data := make([]byte, 1024*128)
 		n, _, err := p2pConnect.ReadFromUDP(data)
 		if err != nil {
-			fmt.Println("读取数据失败!", err)
+			log.Error("读取数据失败!", err)
 			continue
 		}
 
 		if n < 16 { //小于16则认为是心跳包
-			fmt.Println("recv p2pHeartbeat package :", string(data[:n]))
+			log.Error("recv p2pHeartbeat package :", string(data[:n]))
 		} else { //大于16 则认为是实际的数据
 			common.ReadChannel <- data[:n]
 		}

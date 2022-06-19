@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"p2pNat/client/common"
 
@@ -15,6 +14,5 @@ func ReadCfg(path string) (*common.Config, error) {
 	} else {
 		yaml.NewDecoder(f).Decode(conf)
 	}
-	fmt.Println("conf: ", conf)
 	return conf, nil
 }
