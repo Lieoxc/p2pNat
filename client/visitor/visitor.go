@@ -3,7 +3,8 @@ package visitor
 import (
 	"net"
 	"p2pNat/client/common"
-	"p2pNat/client/log"
+
+	"github.com/Lieoxc/log"
 )
 
 //访问者，通过监听本地代理地址，将收到的数据转发到Nat洞中

@@ -5,13 +5,14 @@ import (
 	"net"
 	"p2pNat/client/common"
 	"p2pNat/client/config"
-	"p2pNat/client/log"
 	"p2pNat/client/utils"
 	"p2pNat/client/visited"
 	"p2pNat/client/visitor"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Lieoxc/log"
 )
 
 var ( //p2p对端的NAT外网地址和端口
@@ -112,7 +113,7 @@ func p2pHandler(host, port string) {
 
 func p2pSend(p2pConnect *net.UDPConn, remoteAddr *net.UDPAddr) {
 	i := 0
-	cgTicker := time.NewTicker(time.Second * 5)
+	cgTicker := time.NewTicker(time.Second * 2)
 	for {
 		select {
 		case <-cgTicker.C: //定时发送心跳包，保证 Nat 洞的存活性

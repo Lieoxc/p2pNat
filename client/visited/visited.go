@@ -3,8 +3,9 @@ package visited
 import (
 	"net"
 	"p2pNat/client/common"
-	"p2pNat/client/log"
 	"sync"
+
+	"github.com/Lieoxc/log"
 )
 
 var (
@@ -29,7 +30,7 @@ func Run(visited common.VisitedSt) {
 }
 func visitedRead(tcpConnect net.Conn) {
 	for {
-		data := make([]byte, 1024*128)
+		data := make([]byte, 1024*1024*128)
 		n, err := tcpConnect.Read(data)
 		if err != nil {
 			log.Error("Read from tcp server failed,err:", err)
